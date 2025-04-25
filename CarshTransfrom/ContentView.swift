@@ -90,7 +90,11 @@ struct ContentView: View {
             
         }
     }
+}
 
+//MARK: 各类方法
+extension ContentView {
+    
     func startSymbolicate() {
         outputLog = "解析中..."
         guard let crashLog = crashLogFile, let dsym = dSYMFile else {
