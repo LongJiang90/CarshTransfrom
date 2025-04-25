@@ -6,17 +6,20 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FD974A0A2DBB536E0093484C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD974A042DBB536E0093484C /* Preview Assets.xcassets */; };
+		FD974A0B2DBB536E0093484C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD974A062DBB536E0093484C /* Assets.xcassets */; };
+		FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD974A072DBB536E0093484C /* CarshTransfromApp.swift */; };
+		FD974A0D2DBB536E0093484C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD974A082DBB536E0093484C /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FD9749F32DBB2A130093484C /* CarshTransfrom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarshTransfrom.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD974A042DBB536E0093484C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		FD974A062DBB536E0093484C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FD974A072DBB536E0093484C /* CarshTransfromApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarshTransfromApp.swift; sourceTree = "<group>"; };
+		FD974A082DBB536E0093484C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		FD9749F52DBB2A130093484C /* CarshTransfrom */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CarshTransfrom;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FD9749F02DBB2A130093484C /* Frameworks */ = {
@@ -32,7 +35,7 @@
 		FD9749EA2DBB2A130093484C = {
 			isa = PBXGroup;
 			children = (
-				FD9749F52DBB2A130093484C /* CarshTransfrom */,
+				FD974A092DBB536E0093484C /* CarshTransfrom */,
 				FD9749F42DBB2A130093484C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +46,25 @@
 				FD9749F32DBB2A130093484C /* CarshTransfrom.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FD974A052DBB536E0093484C /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				FD974A042DBB536E0093484C /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		FD974A092DBB536E0093484C /* CarshTransfrom */ = {
+			isa = PBXGroup;
+			children = (
+				FD974A052DBB536E0093484C /* Preview Content */,
+				FD974A062DBB536E0093484C /* Assets.xcassets */,
+				FD974A072DBB536E0093484C /* CarshTransfromApp.swift */,
+				FD974A082DBB536E0093484C /* ContentView.swift */,
+			);
+			path = CarshTransfrom;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -59,9 +81,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				FD9749F52DBB2A130093484C /* CarshTransfrom */,
 			);
 			name = CarshTransfrom;
 			packageProductDependencies = (
@@ -109,6 +128,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD974A0A2DBB536E0093484C /* Preview Assets.xcassets in Resources */,
+				FD974A0B2DBB536E0093484C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +140,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */,
+				FD974A0D2DBB536E0093484C /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,9 +290,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -296,9 +323,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = NO;
+				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
