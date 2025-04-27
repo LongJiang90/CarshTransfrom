@@ -224,8 +224,8 @@ extension ContentView {
         let crashAddrStr = "0x" + input[crashRange]
         let loadAddrStr = "0x" + input[loadRange]
         
-        guard let crashAddr = UInt64(crashAddrStr.dropFirst(2), radix: 16),
-              let loadAddr = UInt64(loadAddrStr.dropFirst(2), radix: 16) else {
+        guard let _ = UInt64(crashAddrStr.dropFirst(2), radix: 16),
+              let _ = UInt64(loadAddrStr.dropFirst(2), radix: 16) else {
             signalOutputLog += "\n地址转换失败"
             isLoading = false
             return
