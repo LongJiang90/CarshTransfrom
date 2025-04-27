@@ -8,6 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+//MARK: 日志输出视图
 struct LogTextView: NSViewRepresentable {
     @Binding var text: String
     @Binding var searchText: String?
@@ -134,7 +135,7 @@ struct LogTextView: NSViewRepresentable {
             let textNSString = textView.string as NSString
             let fullRange = NSRange(location: 0, length: textNSString.length)
             
-            // 先把所有高亮成黄色
+            // 先把所有高亮成灰色
             textView.textStorage?.removeAttribute(.backgroundColor, range: fullRange)
             for match in matches {
                 textView.textStorage?.addAttribute(.backgroundColor, value: NSColor.gray, range: match)
@@ -150,6 +151,7 @@ struct LogTextView: NSViewRepresentable {
     }
 }
 
+//MARK: 拖动添加文件视图
 struct FileDropArea: View {
     let title: String
     @Binding var fileURL: URL?
@@ -180,6 +182,7 @@ struct FileDropArea: View {
     }
 }
 
+//MARK: 自定义切换控制视图
 enum TabType: String, CaseIterable, Identifiable {
     case whole = "整体解析"
     case single = "单项解析"
@@ -215,6 +218,7 @@ struct CustomSegmentedControl: View {
     }
 }
 
+//MARK: 带背景,圆角的按钮
 struct ActionButton: View {
     var title: String
     var isEnabled: Bool
