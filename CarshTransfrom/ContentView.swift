@@ -54,7 +54,7 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("输入加载地址（load address）：")
                 HStack {
-                    TextField("例如 0x0000000103385dfc 0x102ed4000 + 4922876", text: $loadAddress)
+                    TextField("例如 0x0000000103385dfc 0x102ed4000", text: $loadAddress)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                     Button("符号化单地址") {
                         symbolicateWithAtos()
@@ -171,14 +171,14 @@ extension ContentView {
         
         let input = loadAddress.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        // 匹配格式：0x0000000103385dfc 0x102ed4000 + 4922876
-        let pattern = #"0x([a-fA-F0-9]+)\s+0x([a-fA-F0-9]+)\s+\+\s+(\d+)"#
+        // 匹配格式：0x0000000103385dfc 0x102ed4000
+        let pattern = #"0x([a-fA-F0-9]+)\s+0x([a-fA-F0-9]+)"#
         guard let regex = try? NSRegularExpression(pattern: pattern),
               let match = regex.firstMatch(in: input, range: NSRange(input.startIndex..., in: input)),
-              match.numberOfRanges == 4,
+              match.numberOfRanges == 3,  // 整个匹配 + 两个组
               let crashRange = Range(match.range(at: 1), in: input),
               let loadRange = Range(match.range(at: 2), in: input) else {
-            outputLog += "\n输入格式错误，请使用: 崩溃地址 加载地址 + 偏移量"
+            outputLog += "\n输入格式错误，请使用: 崩溃地址 加载地址"
             return
         }
         
@@ -191,12 +191,9 @@ extension ContentView {
             return
         }
         
-        let offset = String(format: "0x%llx", crashAddr - loadAddr)
-        let load = String(format: "0x%llx", loadAddr)
-        
         let atos = Process()
         atos.executableURL = URL(fileURLWithPath: "/usr/bin/atos")
-        atos.arguments = ["-arch", "arm64", "-o", lastDsymPath, "-l", load, offset]
+        atos.arguments = ["-arch", "arm64", "-o", lastDsymPath, "-l", loadAddrStr, crashAddrStr]
         
         let pipe = Pipe()
         atos.standardOutput = pipe
@@ -212,35 +209,6 @@ extension ContentView {
             outputLog += "\natos 符号化失败: \(error.localizedDescription)"
         }
     }
-    
-    /// 在给定 dSYM 路径中查找 DWARF 可执行文件（包含递归子目录查找）
-    /// 在 dSYM 或其子路径中查找与主应用同名的 DWARF 可执行文件
-    func findMatchingDsymExecutable(in dsymURL: URL) -> URL? {
-        var appName = dsymURL.deletingPathExtension().lastPathComponent
-        if appName.hasSuffix(".app") {
-            appName = String(appName.dropLast(4)) // 去掉 .app
-        }
-        // 检查主路径
-        let mainDWARFPath = dsymURL.appendingPathComponent("Contents/Resources/DWARF")
-        if let contents = try? FileManager.default.contentsOfDirectory(at: mainDWARFPath, includingPropertiesForKeys: nil),
-           let match = contents.first(where: { $0.lastPathComponent == appName }) {
-            return match
-        }
-
-        // 检查子路径中的 .dSYM 包
-        if let subDsyms = try? FileManager.default.contentsOfDirectory(at: dsymURL, includingPropertiesForKeys: nil) {
-            for sub in subDsyms where sub.pathExtension == "dSYM" {
-                let dwarfPath = sub.appendingPathComponent("Contents/Resources/DWARF")
-                if let dwarfFiles = try? FileManager.default.contentsOfDirectory(at: dwarfPath, includingPropertiesForKeys: nil),
-                   let match = dwarfFiles.first(where: { $0.lastPathComponent == appName }) {
-                    return match
-                }
-            }
-        }
-
-        return nil
-    }
-
     
     func parseLogWithAtos(logURL: URL, dsymPath: String) {
         DispatchQueue.global(qos: .userInitiated).async {
@@ -313,6 +281,46 @@ extension ContentView {
                 outputLog = "导出失败: \(error.localizedDescription)"
             }
         }
+    }
+    
+    /// 查找命中对应路径中 atos
+    /// - Returns: atos 路径
+    func findAtosPath() -> String {
+        let possiblePaths = ["/usr/bin/atos", "/usr/local/bin/atos", "/opt/homebrew/bin/atos"]
+        for path in possiblePaths {
+            if FileManager.default.fileExists(atPath: path) {
+                return path
+            }
+        }
+        return ""
+    }
+    
+    /// 在给定 dSYM 路径中查找 DWARF 可执行文件（包含递归子目录查找）
+    /// 在 dSYM 或其子路径中查找与主应用同名的 DWARF 可执行文件
+    func findMatchingDsymExecutable(in dsymURL: URL) -> URL? {
+        var appName = dsymURL.deletingPathExtension().lastPathComponent
+        if appName.hasSuffix(".app") {
+            appName = String(appName.dropLast(4)) // 去掉 .app
+        }
+        // 检查主路径
+        let mainDWARFPath = dsymURL.appendingPathComponent("Contents/Resources/DWARF")
+        if let contents = try? FileManager.default.contentsOfDirectory(at: mainDWARFPath, includingPropertiesForKeys: nil),
+           let match = contents.first(where: { $0.lastPathComponent == appName }) {
+            return match
+        }
+
+        // 检查子路径中的 .dSYM 包
+        if let subDsyms = try? FileManager.default.contentsOfDirectory(at: dsymURL, includingPropertiesForKeys: nil) {
+            for sub in subDsyms where sub.pathExtension == "dSYM" {
+                let dwarfPath = sub.appendingPathComponent("Contents/Resources/DWARF")
+                if let dwarfFiles = try? FileManager.default.contentsOfDirectory(at: dwarfPath, includingPropertiesForKeys: nil),
+                   let match = dwarfFiles.first(where: { $0.lastPathComponent == appName }) {
+                    return match
+                }
+            }
+        }
+
+        return nil
     }
 }
 
