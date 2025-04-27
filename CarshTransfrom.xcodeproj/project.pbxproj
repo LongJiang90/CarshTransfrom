@@ -11,6 +11,7 @@
 		FD974A0B2DBB536E0093484C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD974A062DBB536E0093484C /* Assets.xcassets */; };
 		FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD974A072DBB536E0093484C /* CarshTransfromApp.swift */; };
 		FD974A0D2DBB536E0093484C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD974A082DBB536E0093484C /* ContentView.swift */; };
+		FDECF9602DBDD5C800582EEE /* LogTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDECF95F2DBDD5C800582EEE /* LogTextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +20,7 @@
 		FD974A062DBB536E0093484C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FD974A072DBB536E0093484C /* CarshTransfromApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarshTransfromApp.swift; sourceTree = "<group>"; };
 		FD974A082DBB536E0093484C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FDECF95F2DBDD5C800582EEE /* LogTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				FD974A062DBB536E0093484C /* Assets.xcassets */,
 				FD974A072DBB536E0093484C /* CarshTransfromApp.swift */,
 				FD974A082DBB536E0093484C /* ContentView.swift */,
+				FDECF95F2DBDD5C800582EEE /* LogTextView.swift */,
 			);
 			path = CarshTransfrom;
 			sourceTree = "<group>";
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */,
+				FDECF9602DBDD5C800582EEE /* LogTextView.swift in Sources */,
 				FD974A0D2DBB536E0093484C /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -278,6 +282,7 @@
 				DEVELOPMENT_TEAM = KRM5HYEDXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Crash解析";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -311,6 +316,7 @@
 				DEVELOPMENT_TEAM = KRM5HYEDXU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Crash解析";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

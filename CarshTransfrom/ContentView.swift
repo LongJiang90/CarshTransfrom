@@ -10,130 +10,175 @@ import UniformTypeIdentifiers
 import AppKit
 
 struct ContentView: View {
+    @State private var selectedTab: TabType = .whole
+
     @State private var crashLogFile: URL?
+    @State private var xcarchiveFile: URL?
     @State private var dSYMFile: URL?
-    @State private var ipaFile: URL?
     @State private var outputLog: String = ""
+    @State private var searchText: String?
+    @State private var searchTrigger: Bool?
     @State private var isLoading = false
     @State private var loadAddress: String = ""
+    @State private var signalOutputLog: String = ""
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 20) {
+            // 顶部基础数据区
             VStack(spacing: 20) {
-                Text("拖拽 .ips / .log / .xccrashpoint / .dSYM / .ipa 到窗口中")
+                Text("基础数据")
                     .font(.title2)
                     .padding(.top)
-
-                FileDropArea(title: "拖入 .ips / .log / .xccrashpoint 文件", fileURL: $crashLogFile, allowedTypes: ["ips", "log", "xccrashpoint"])
-                FileDropArea(title: "拖入 .dSYM 文件夹", fileURL: $dSYMFile, allowedTypes: ["dSYM"])
-                FileDropArea(title: "可选: 拖入 .ipa 或 .app 文件", fileURL: $ipaFile, allowedTypes: ["ipa", "app"])
-
+                
                 HStack(spacing: 20) {
-                    Button("开始解析") {
-                        startSymbolicate()
-                    }
-                    .disabled(crashLogFile == nil || dSYMFile == nil)
-
-                    Button("导出日志") {
-                        exportLog()
-                    }
-                    .disabled(outputLog.isEmpty)
+                    FileDropArea(title: "拖入 .ips / .log / .xccrashpoint 文件", fileURL: $crashLogFile, allowedTypes: ["ips", "log", "xccrashpoint"])
+                    FileDropArea(title: "拖入 .xcarchive / .app.DSYM 文件", fileURL: $xcarchiveFile, allowedTypes: ["xcarchive", "dSYM"])
+                        .onChange(of: xcarchiveFile) { oldValue, newValue in
+                            if let xcarchive = newValue {
+                                parseXCArchive(xcarchive)
+                            }
+                        }
                 }
+                .padding(.horizontal, 20)
                 .padding(.bottom)
             }
             .background(Color(NSColor.windowBackgroundColor))
-            .zIndex(1)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(.gray, lineWidth: 2)
+            )
 
-            Divider()
+            // 分段控制
+            CustomSegmentedControl(selection: $selectedTab)
 
-            LogTextView(text: $outputLog)
-                .frame(maxHeight: .infinity)
-            
-            Divider()
-            
-            VStack(alignment: .leading, spacing: 10) {
-                Text("输入加载地址（load address）：")
-                HStack {
-                    TextField("例如 0x0000000103385dfc 0x102ed4000", text: $loadAddress)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    Button("符号化单地址") {
-                        symbolicateWithAtos()
+            // 根据选中的tab切换显示
+            Group {
+                switch selectedTab {
+                case .whole:
+                    VStack {
+                        HStack(spacing: 20) {
+                            ActionButton(title: "开始解析",
+                                             isEnabled: crashLogFile != nil && dSYMFile != nil,
+                                             action: startSymbolicate)
+                                
+                                ActionButton(title: "导出日志",
+                                             isEnabled: !outputLog.isEmpty,
+                                             action: exportLog)
+                        }
+                        .padding(.top)
+                        
+                        HStack {
+                            TextField("搜索日志", text: Binding(
+                                get: { searchText ?? "" },
+                                set: { searchText = $0.isEmpty ? nil : $0 }
+                            ))
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 200)
+                            ActionButton(title: "搜索",
+                                             isEnabled: !(searchText ?? "").isEmpty,
+                                             width: 60,
+                                             height: 30,
+                                             action: {
+                                                 searchTrigger = true
+                                             })
+                        }
+                        .frame(alignment: .leading)
+
+                        LogTextView(text: $outputLog, searchText: $searchText, searchTrigger: $searchTrigger)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
+                    }
+                case .single:
+                    VStack(spacing: 10) {
+                        HStack {
+                            Text("输入崩溃日志地址:")
+                            TextField("例如 0x0000000103385dfc 0x102ed4000", text: $loadAddress)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                            Button("符号化单地址") {
+                                symbolicateWithAtos()
+                            }
+                            Button("清空解析日志") {
+                                signalOutputLog = ""
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top)
+                        
+                        LogTextView(text: $signalOutputLog, searchText: $searchText, searchTrigger: $searchTrigger)
+                            .padding(.horizontal, 10)
+                            .padding(.bottom, 10)
                     }
                 }
             }
-            .padding()
-            .frame(height: 100)
-
+            .background(Color(NSColor.windowBackgroundColor))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(.gray, lineWidth: 2)
+            )
+            .frame(maxHeight: .infinity)
         }
         .padding()
-        .frame(minWidth: 600, minHeight: 700)
+        .frame(minWidth: 600, minHeight: 800)
         .overlay(
             Group {
                 if isLoading {
                     Color.black.opacity(0.4)
                         .edgesIgnoringSafeArea(.all)
                         .overlay(
-                            ProgressView(label: {
-                                Text("解析中").foregroundColor(.white)
-                            })
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color(NSColor.windowBackgroundColor))
-                            .cornerRadius(12)
+                            ProgressView("解析中...")
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color(NSColor.windowBackgroundColor))
+                                .cornerRadius(12)
                         )
                         .zIndex(2)
                 }
             }
         )
-        .onAppear {
-            
-        }
     }
 }
+
 
 //MARK: 各类方法
 extension ContentView {
     
     func startSymbolicate() {
-        outputLog = "解析中..."
-        guard let crashLog = crashLogFile, let dsym = dSYMFile else {
-            outputLog = "请拖入崩溃日志和 dSYM 文件"
+        guard let crashLog = crashLogFile, let dSYM = dSYMFile else {
+            outputLog += "请拖入崩溃日志和 .xcarchive 文件"
             return
         }
-        
         isLoading = true
         
-        // 判断DSYM是否有可执行文件
-        guard let executableURL = findMatchingDsymExecutable(in: dsym) else {
-            DispatchQueue.main.async {
-                outputLog = "未能在 dSYM 或其子路径中找到可执行文件，解析失败"
-                isLoading = false
-            }
-            return
-        }
-        let lastDsymPath = executableURL.path
+        let dsymPath = dSYM.path
         
         let ext = crashLog.pathExtension.lowercased()
         
         if ext == "log" {
-            parseLogWithAtos(logURL: crashLog, dsymPath: lastDsymPath)
+            parseLogWithAtos(logURL: crashLog, dsymPath: dsymPath)
             return
         }
 
 
         DispatchQueue.global(qos: .userInitiated).async {
-            let tempOutput = FileManager.default.temporaryDirectory.appendingPathComponent("symbolicated.crash")
+            // 目标路径 = crashLog 文件的所在目录 + "symbolicated.crash"
+            let tempOutput = crashLog.deletingLastPathComponent().appendingPathComponent("symbolicated.crash")
+            if FileManager.default.isDeletableFile(atPath: tempOutput.path) {
+                do {
+                    try FileManager.default.removeItem(at: tempOutput)
+                } catch {}
+            }
+            FileManager.default.createFile(atPath: tempOutput.path, contents: nil, attributes: nil)
             
             let symbolicatePath = "/Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework/Versions/A/Resources/symbolicatecrash"
             let environment = [
                 "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer",
-                "DEVELOPER_SYMBOL_PATH": lastDsymPath
+                "DEVELOPER_SYMBOL_PATH": dsymPath
             ]
             
             let process = Process()
             process.executableURL = URL(fileURLWithPath: symbolicatePath)
-            process.arguments = [crashLog.path]
+            process.arguments = ["-v", crashLog.path]
             process.environment = environment
             process.standardOutput = try? FileHandle(forWritingTo: tempOutput)
             
@@ -155,19 +200,12 @@ extension ContentView {
     }
     
     func symbolicateWithAtos() {
+        isLoading = true
         guard let dsym = dSYMFile else {
-            outputLog = "缺少 dSYM 文件"
+            signalOutputLog = "缺少 dSYM 文件"
+            isLoading = false
             return
         }
-        // 判断DSYM是否有可执行文件
-        guard let executableURL = findMatchingDsymExecutable(in: dsym) else {
-            DispatchQueue.main.async {
-                outputLog = "未能在 dSYM 或其子路径中找到可执行文件，解析失败"
-                isLoading = false
-            }
-            return
-        }
-        let lastDsymPath = executableURL.path
         
         let input = loadAddress.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -178,7 +216,8 @@ extension ContentView {
               match.numberOfRanges == 3,  // 整个匹配 + 两个组
               let crashRange = Range(match.range(at: 1), in: input),
               let loadRange = Range(match.range(at: 2), in: input) else {
-            outputLog += "\n输入格式错误，请使用: 崩溃地址 加载地址"
+            signalOutputLog += "\n输入格式错误，请使用: 崩溃地址 加载地址"
+            isLoading = false
             return
         }
         
@@ -187,13 +226,14 @@ extension ContentView {
         
         guard let crashAddr = UInt64(crashAddrStr.dropFirst(2), radix: 16),
               let loadAddr = UInt64(loadAddrStr.dropFirst(2), radix: 16) else {
-            outputLog += "\n地址转换失败"
+            signalOutputLog += "\n地址转换失败"
+            isLoading = false
             return
         }
         
         let atos = Process()
         atos.executableURL = URL(fileURLWithPath: "/usr/bin/atos")
-        atos.arguments = ["-arch", "arm64", "-o", lastDsymPath, "-l", loadAddrStr, crashAddrStr]
+        atos.arguments = ["-arch", "arm64", "-o", dsym.path, "-l", loadAddrStr, crashAddrStr]
         
         let pipe = Pipe()
         atos.standardOutput = pipe
@@ -204,9 +244,11 @@ extension ContentView {
             atos.waitUntilExit()
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             let result = String(decoding: data, as: UTF8.self)
-            outputLog += "\n[atos 符号化结果]: \(result)"
+            signalOutputLog += "\n[atos 符号化结果]: \(result)"
+            isLoading = false
         } catch {
-            outputLog += "\natos 符号化失败: \(error.localizedDescription)"
+            signalOutputLog += "\natos 符号化失败: \(error.localizedDescription)"
+            isLoading = false
         }
     }
     
@@ -283,6 +325,26 @@ extension ContentView {
         }
     }
     
+    /// 在.xcarchive文件中查找 .DSYM 和 .app
+    /// - Parameter xcarchive: 文件路径
+    func parseXCArchive(_ xcarchive: URL) {
+        outputLog = ""
+        if xcarchive.lastPathComponent.hasSuffix(".app.dSYM") {
+            let fileUrl = findMatchingDsymExecutable(in: xcarchive)
+            dSYMFile = fileUrl
+            return
+        } else {
+            let dSYMsPath = xcarchive.appendingPathComponent("dSYMs")
+            if let dsyms = try? FileManager.default.contentsOfDirectory(at: dSYMsPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles),
+               let dsym = dsyms.first(where: { $0.lastPathComponent.contains(".app.dSYM") }) {
+                dSYMFile = dsym
+            } else {
+                outputLog += "\n未找到 .dSYM 文件"
+            }
+        }
+    }
+
+    
     /// 查找命中对应路径中 atos
     /// - Returns: atos 路径
     func findAtosPath() -> String {
@@ -323,86 +385,6 @@ extension ContentView {
         return nil
     }
 }
-
-struct FileDropArea: View {
-    let title: String
-    @Binding var fileURL: URL?
-    let allowedTypes: [String]
-
-    var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
-            .foregroundColor(.gray)
-            .frame(height: 60)
-            .overlay(
-                Text(fileURL?.lastPathComponent ?? title)
-                    .foregroundColor(.primary)
-            )
-            .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-                guard let provider = providers.first else { return false }
-                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
-                    DispatchQueue.main.async {
-                        if let data = item as? Data,
-                           let url = URL(dataRepresentation: data, relativeTo: nil),
-                           allowedTypes.contains(url.pathExtension) || allowedTypes.contains(url.lastPathComponent) {
-                            fileURL = url
-                        }
-                    }
-                }
-                return true
-            }
-    }
-}
-
-struct LogTextView: NSViewRepresentable {
-    @Binding var text: String
-
-    func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSScrollView()
-        scrollView.hasVerticalScroller = true
-        scrollView.autohidesScrollers = true
-        scrollView.borderType = .noBorder
-        scrollView.backgroundColor = .clear
-
-        let textView = NSTextView()
-        textView.isEditable = false
-        textView.isSelectable = true
-        textView.isVerticallyResizable = true
-        textView.isHorizontallyResizable = false
-        textView.autoresizingMask = [.width]
-        textView.drawsBackground = false
-        textView.textColor = .white
-        textView.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
-        textView.textContainer?.containerSize = NSSize(width: scrollView.contentSize.width, height: .greatestFiniteMagnitude)
-        textView.textContainer?.widthTracksTextView = true
-        textView.string = text
-
-        scrollView.documentView = textView
-        context.coordinator.textView = textView
-
-        return scrollView
-    }
-
-    func updateNSView(_ nsView: NSScrollView, context: Context) {
-        guard let textView = context.coordinator.textView else { return }
-
-        if textView.string != text {
-            textView.string = text
-            textView.scrollToEndOfDocument(nil)
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    class Coordinator {
-        var textView: NSTextView?
-    }
-}
-
-
-
 
 #Preview {
     ContentView()
