@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FD16F6702DBF2B54004C811D /* CarshTransfromTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD16F66F2DBF2B54004C811D /* CarshTransfromTools.swift */; };
 		FD974A0A2DBB536E0093484C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD974A042DBB536E0093484C /* Preview Assets.xcassets */; };
 		FD974A0B2DBB536E0093484C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD974A062DBB536E0093484C /* Assets.xcassets */; };
 		FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD974A072DBB536E0093484C /* CarshTransfromApp.swift */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FD16F66F2DBF2B54004C811D /* CarshTransfromTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarshTransfromTools.swift; sourceTree = "<group>"; };
 		FD9749F32DBB2A130093484C /* CarshTransfrom.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarshTransfrom.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD974A042DBB536E0093484C /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FD974A062DBB536E0093484C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 				FD974A072DBB536E0093484C /* CarshTransfromApp.swift */,
 				FD974A082DBB536E0093484C /* ContentView.swift */,
 				FDECF95F2DBDD5C800582EEE /* LogTextView.swift */,
+				FD16F66F2DBF2B54004C811D /* CarshTransfromTools.swift */,
 			);
 			path = CarshTransfrom;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 			files = (
 				FD974A0C2DBB536E0093484C /* CarshTransfromApp.swift in Sources */,
 				FDECF9602DBDD5C800582EEE /* LogTextView.swift in Sources */,
+				FD16F6702DBF2B54004C811D /* CarshTransfromTools.swift in Sources */,
 				FD974A0D2DBB536E0093484C /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,6 +290,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CarshTransfrom/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "崩溃解析";
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "";
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "";
+				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -296,7 +305,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
@@ -323,6 +332,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CarshTransfrom/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "崩溃解析";
+				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "";
+				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "";
+				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "";
+				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -333,7 +347,7 @@
 					"@executable_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;

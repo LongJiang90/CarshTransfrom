@@ -158,27 +158,40 @@ struct FileDropArea: View {
     let allowedTypes: [String]
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
-            .foregroundColor(.gray)
-            .frame(height: 60)
-            .overlay(
-                Text(fileURL?.lastPathComponent ?? title)
-                    .foregroundColor(.primary)
-            )
-            .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-                guard let provider = providers.first else { return false }
-                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
-                    DispatchQueue.main.async {
-                        if let data = item as? Data,
-                           let url = URL(dataRepresentation: data, relativeTo: nil),
-                           allowedTypes.contains(url.pathExtension) || allowedTypes.contains(url.lastPathComponent) {
-                            fileURL = url
-                        }
+        ZStack(alignment: .topTrailing) {
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [5]))
+                .foregroundColor(.gray)
+                .frame(height: 60)
+                .overlay(
+                    Text(fileURL?.lastPathComponent ?? title)
+                        .foregroundColor(.primary)
+                )
+            
+            // 右上角的清除按钮
+            if fileURL != nil {
+                Button(action: {
+                    fileURL = nil
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                        .padding(6)
+                }
+            }
+        }
+        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
+            guard let provider = providers.first else { return false }
+            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { (item, error) in
+                DispatchQueue.main.async {
+                    if let data = item as? Data,
+                       let url = URL(dataRepresentation: data, relativeTo: nil),
+                       allowedTypes.contains(url.pathExtension) || allowedTypes.contains(url.lastPathComponent) {
+                        fileURL = url
                     }
                 }
-                return true
             }
+            return true
+        }
     }
 }
 
