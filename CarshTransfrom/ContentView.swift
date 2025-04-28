@@ -33,7 +33,7 @@ struct ContentView: View {
                 HStack(spacing: 20) {
                     FileDropArea(title: "拖入 .ips / .log / .xccrashpoint 文件", fileURL: $crashLogFile, allowedTypes: ["ips", "log", "xccrashpoint"])
                     FileDropArea(title: "拖入 .xcarchive / .app.DSYM 文件", fileURL: $xcarchiveFile, allowedTypes: ["xcarchive", "dSYM"])
-                        .onChange(of: xcarchiveFile) { oldValue, newValue in
+                        .onChange(of: xcarchiveFile) { newValue in
                             if let xcarchive = newValue {
                                 parseXCArchive(xcarchive)
                             }
