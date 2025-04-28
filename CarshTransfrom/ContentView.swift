@@ -35,11 +35,11 @@ struct ContentView: View {
                 
                 HStack(spacing: 20) {
                     FileDropArea(title: "拖入 .ips / .log / .xccrashpoint 文件", fileURL: $crashLogFile, allowedTypes: ["ips", "log", "xccrashpoint"])
-                        .onChange(of: crashLogFile) { newValue in
+                        .applyOnChange(for: $crashLogFile) { newValue in
                             CarshTransfromTools.shared.crashLogFile = newValue
                         }
                     FileDropArea(title: "拖入 .xcarchive / .app.DSYM 文件", fileURL: $xcarchiveFile, allowedTypes: ["xcarchive", "dSYM"])
-                        .onChange(of: xcarchiveFile) { newValue in
+                        .applyOnChange(for: $xcarchiveFile) { newValue in
                             CarshTransfromTools.shared.xcarchiveFile = newValue
                             if let xcarchive = newValue {
                                 let isFind = CarshTransfromTools.shared.parseXCArchive(xcarchive)

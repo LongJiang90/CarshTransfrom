@@ -253,3 +253,19 @@ struct ActionButton: View {
             }
     }
 }
+
+
+extension View {
+    @ViewBuilder
+    func applyOnChange<T: Equatable>(for binding: Binding<T>, perform action: @escaping (T) -> Void) -> some View {
+        if #available(macOS 14.0, *) {
+            self.onChange(of: binding.wrappedValue) { oldValue, newValue in
+                action(newValue)
+            }
+        } else {
+            self.onChange(of: binding.wrappedValue) { newValue in
+                action(newValue)
+            }
+        }
+    }
+}
