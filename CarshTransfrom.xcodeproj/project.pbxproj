@@ -24,6 +24,7 @@
 		FD974A072DBB536E0093484C /* CarshTransfromApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarshTransfromApp.swift; sourceTree = "<group>"; };
 		FD974A082DBB536E0093484C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		FDB7F9DB2DC06F92001202E2 /* BookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkManager.swift; sourceTree = "<group>"; };
+		FDB7F9DD2DC07C7C001202E2 /* CarshTransfrom.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarshTransfrom.entitlements; sourceTree = "<group>"; };
 		FDECF95F2DBDD5C800582EEE /* LogTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTextView.swift; sourceTree = "<group>"; };
 		FDECF9612DBE184500582EEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -66,6 +67,7 @@
 		FD974A092DBB536E0093484C /* CarshTransfrom */ = {
 			isa = PBXGroup;
 			children = (
+				FDB7F9DD2DC07C7C001202E2 /* CarshTransfrom.entitlements */,
 				FDECF9612DBE184500582EEE /* Info.plist */,
 				FD974A052DBB536E0093484C /* Preview Content */,
 				FD974A062DBB536E0093484C /* Assets.xcassets */,
@@ -287,14 +289,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = CarshTransfrom/CarshTransfrom.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CarshTransfrom/Preview Content\"";
-				DEVELOPMENT_TEAM = KRM5HYEDXU;
+				DEVELOPMENT_TEAM = UL35MHK385;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CarshTransfrom/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "崩溃解析";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "此应用需要访问您的桌面文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "此应用需要访问您的文稿文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
 				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "此应用需要访问您的下载文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
@@ -310,7 +315,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
+				PRODUCT_BUNDLE_IDENTIFIER = com.longj.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SUPPORTED_PLATFORMS = macosx;
@@ -329,14 +334,17 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = CarshTransfrom/CarshTransfrom.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CarshTransfrom/Preview Content\"";
-				DEVELOPMENT_TEAM = KRM5HYEDXU;
+				DEVELOPMENT_TEAM = UL35MHK385;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CarshTransfrom/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "崩溃解析";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSDesktopFolderUsageDescription = "此应用需要访问您的桌面文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "此应用需要访问您的文稿文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
 				INFOPLIST_KEY_NSDownloadsFolderUsageDescription = "此应用需要访问您的下载文件夹，以便您能拖动文件至应用内，解析崩溃文件时创建默认的崩溃输出文件。";
@@ -352,7 +360,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.6;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.youloft.CarshTransfrom;
+				PRODUCT_BUNDLE_IDENTIFIER = com.longj.CarshTransfrom;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SUPPORTED_PLATFORMS = macosx;
