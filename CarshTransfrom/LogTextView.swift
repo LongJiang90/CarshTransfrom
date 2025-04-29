@@ -196,7 +196,7 @@ struct FileDropArea: View {
                             fileURL = url
                         } else {
                             print("⚠️ 没有访问权限，申请授权")
-                            BookmarkManager.shared.requestAccessToDirectory(defaultURL: parentDirectory) { url in
+                            BookmarkManager.shared.requestAccessToParentDirectory(of: parentDirectory) { url in
                                 if let url = url {
                                     fileURL = url
                                 } else {

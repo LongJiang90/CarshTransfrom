@@ -66,16 +66,6 @@ struct ContentView: View {
                 switch selectedTab {
                 case .whole:
                     VStack {
-                        HStack(spacing: 20) {
-                            ActionButton(title: "开始解析",
-                                         isEnabled: crashLogFile != nil && dSYMFile != nil,
-                                         action: startSymbolicate)
-                            //                            ActionButton(title: "导出日志",
-                            //                                         isEnabled: !outputLog.isEmpty,
-                            //                                         action: exportLog)
-                        }
-                        .padding(.top)
-                        
                         HStack {
                             TextField("搜索日志", text: Binding(
                                 get: { searchText ?? "" },
@@ -83,15 +73,20 @@ struct ContentView: View {
                             ))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .frame(width: 200)
-                            ActionButton(title: "搜索",
-                                         isEnabled: !(searchText ?? "").isEmpty,
-                                         width: 60,
-                                         height: 30,
-                                         action: {
+                            .padding(.leading)
+                            
+                            ActionButton(title: "搜索", isEnabled: !(searchText ?? "").isEmpty, width: 60, height: 30, action: {
                                 searchTrigger = true
                             })
+                            
+                            Spacer()
+                            
+                            ActionButton(title: "开始解析", isEnabled: crashLogFile != nil && dSYMFile != nil, action: startSymbolicate)
+                                .padding(.horizontal)
+                            
                         }
                         .frame(alignment: .leading)
+                        .padding(.top)
                         
                         
                         if !crashItems.isEmpty {
@@ -178,8 +173,8 @@ struct ContentView: View {
 extension ContentView {
     
     func startSymbolicate() {
-        guard let crashLog = crashLogFile, let dSYM = dSYMFile else {
-            outputLog += "请拖入崩溃日志和 .xcarchive 文件"
+        guard let crashLog = crashLogFile, let _ = dSYMFile else {
+            outputLog += "请拖入 崩溃日志 和 .xcarchive/.dSYM 文件"
             return
         }
         isLoading = true

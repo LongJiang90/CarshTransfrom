@@ -61,27 +61,41 @@ class BookmarkManager {
         }
     }
 
-    func requestAccessToDirectory(defaultURL: URL, completion: @escaping (URL?) -> Void) {
-        let panel = NSOpenPanel()
-        panel.title = "选择目录授权"
-        panel.message = "App 需要访问目录以操作文件"
-        panel.directoryURL = defaultURL
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.prompt = "授权访问"
+    func requestAccessToParentDirectory(of fileURL: URL, completion: @escaping (URL?) -> Void) {
+        let parentDirectory = fileURL.deletingLastPathComponent()
 
-        panel.begin { result in
-            if result == .OK, let url = panel.url {
-                if url.startAccessingSecurityScopedResource() {
-                    self.saveSecurityScopedBookmark(for: url)
-                    completion(url)
+        // 尝试直接请求访问，不弹窗
+        if parentDirectory.startAccessingSecurityScopedResource() {
+            BookmarkManager.shared.saveSecurityScopedBookmark(for: parentDirectory)
+            completion(parentDirectory)
+        } else {
+            // 失败了，弹出选父目录
+            let panel = NSOpenPanel()
+            panel.title = "需要访问文件所在的目录"
+            panel.message = "App 需要访问 '\(parentDirectory.lastPathComponent)' 目录。"
+            panel.directoryURL = parentDirectory
+            panel.canChooseFiles = false
+            panel.canChooseDirectories = true
+            panel.allowsMultipleSelection = false
+            panel.prompt = "授权访问"
+
+            panel.begin { result in
+                if result == .OK, let url = panel.url {
+                    if url == parentDirectory {
+                        if url.startAccessingSecurityScopedResource() {
+                            BookmarkManager.shared.saveSecurityScopedBookmark(for: url)
+                            completion(url)
+                        } else {
+                            print("❌ 无法访问选择的目录")
+                            completion(nil)
+                        }
+                    } else {
+                        print("❌ 请选择正确的目录")
+                        completion(nil)
+                    }
                 } else {
-                    print("❌ 用户选择的目录无法访问")
                     completion(nil)
                 }
-            } else {
-                completion(nil)
             }
         }
     }
