@@ -186,24 +186,24 @@ struct FileDropArea: View {
                     if let data = item as? Data,
                        let url = URL(dataRepresentation: data, relativeTo: nil),
                        allowedTypes.contains(url.pathExtension) || allowedTypes.contains(url.lastPathComponent) {
+                        
+                        fileURL = url
                         //获取该路径的权限
-                        print("📂 拖入文件: \(url.path)")
-                        
-                        let parentDirectory = url.deletingLastPathComponent()
-                        
-                        if BookmarkManager.shared.checkIfAccessGranted(for: parentDirectory) {
-                            print("✅ 已有访问权限，可以操作")
-                            fileURL = url
-                        } else {
-                            print("⚠️ 没有访问权限，申请授权")
-                            BookmarkManager.shared.requestAccessToParentDirectory(of: parentDirectory) { url in
-                                if let url = url {
-                                    fileURL = url
-                                } else {
-                                    print("❌ 用户拒绝授权")
-                                }
-                            }
-                        }
+//                        print("📂 拖入文件: \(url.path)")
+//                        let parentDirectory = url.deletingLastPathComponent()
+//                        if BookmarkManager.shared.checkIfAccessGranted(for: parentDirectory) {
+//                            print("✅ 已有访问权限，可以操作")
+//                            fileURL = url
+//                        } else {
+//                            print("⚠️ 没有访问权限，申请授权")
+//                            BookmarkManager.shared.requestAccessToParentDirectory(of: parentDirectory) { url in
+//                                if let url = url {
+//                                    fileURL = url
+//                                } else {
+//                                    print("❌ 用户拒绝授权")
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
