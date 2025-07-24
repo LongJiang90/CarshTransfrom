@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var searchText: String?
     @State private var searchTrigger: Bool?
     @State private var isLoading = false
+    @State private var canAnalyzeLogs = false
     @State private var loadAddress: String = ""
     @State private var signalOutputLog: String = ""
     
@@ -37,6 +38,7 @@ struct ContentView: View {
                     FileDropArea(title: "拖入 .ips / .log / .xccrashpoint 文件", fileURL: $crashLogFile, allowedTypes: ["ips", "log", "xccrashpoint"])
                         .applyOnChange(for: $crashLogFile) { newValue in
                             CarshTransfromTools.shared.crashLogFile = newValue
+                            canAnalyzeLogs = crashLogFile != nil && dSYMFile != nil
                         }
                     FileDropArea(title: "拖入 .xcarchive / .app.DSYM 文件", fileURL: $xcarchiveFile, allowedTypes: ["xcarchive", "dSYM"])
                         .applyOnChange(for: $xcarchiveFile) { newValue in
@@ -45,6 +47,7 @@ struct ContentView: View {
                                 let isFind = CarshTransfromTools.shared.parseXCArchive(xcarchive)
                                 if isFind == true {
                                     dSYMFile = CarshTransfromTools.shared.dSYMFile
+                                    canAnalyzeLogs = crashLogFile != nil && dSYMFile != nil
                                 }
                             }
                         }
@@ -81,7 +84,7 @@ struct ContentView: View {
                             
                             Spacer()
                             
-                            ActionButton(title: "开始解析", isEnabled: crashLogFile != nil && dSYMFile != nil, action: startSymbolicate)
+                            ActionButton(title: "开始解析", isEnabled: canAnalyzeLogs, action: startSymbolicate)
                                 .padding(.horizontal)
                             
                         }
@@ -120,8 +123,8 @@ struct ContentView: View {
                 case .single:
                     VStack(spacing: 10) {
                         HStack {
-                            Text("输入崩溃日志地址:")
-                            TextField("例如 0x0000000103385dfc 0x102ed4000", text: $loadAddress)
+                            Text("输入崩溃日志地址\n(单行或多行):")
+                            TextField("0x0000000103385dfc 0x102ed4000 + 2184272", text: $loadAddress)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                             Button("符号化单地址") {
                                 symbolicateWithAtos()
@@ -201,7 +204,7 @@ extension ContentView {
     
     func symbolicateWithAtos() {
         isLoading = true
-        let (_, result) = CarshTransfromTools.shared.symbolicateWithAtos(loadAddress: loadAddress)
+        let (_, result) = CarshTransfromTools.shared.symbolicateMultiLineWithAtos(loadAddress)
         signalOutputLog += "\n[atos 符号化结果]: \(result ?? "")"
         isLoading = false
     }

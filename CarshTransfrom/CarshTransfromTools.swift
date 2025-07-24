@@ -27,7 +27,7 @@ struct CarshTransfromTools {
         ipsySymbolicate(crashLog: crashLog, dSYM: dSYM, completHandler: completHandler)
     }
     
-    func ipsySymbolicate(crashLog: URL, dSYM: URL, completHandler: @escaping (Bool, String?)->Void) {
+    func ipsySymbolicate(crashLog: URL, dSYM: URL, completHandler: @escaping (Bool, String?) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             // 目标路径 = crashLog 文件的所在目录 + "symbolicated.crash"
             let tempOutput = crashLog.deletingLastPathComponent().appendingPathComponent("symbolicated.crash")
@@ -72,6 +72,25 @@ struct CarshTransfromTools {
     }
     
     //MARK: 单行解析
+    func symbolicateMultiLineWithAtos(_ crashContent: String) -> (Bool, String?) {
+        var resArr: [String] = []
+        let strings = crashContent.components(separatedBy: "\n")
+        for oneLine in strings {
+            let (sucess, resStr) = symbolicateWithAtos(loadAddress: oneLine)
+            if let resStr = resStr, sucess {
+                resArr.append(resStr)
+            } else {
+                resArr.append(oneLine + "：解析失败")
+            }
+        }
+        let resultString = resArr.joined(separator: "\n")
+        if !resultString.isEmpty {
+            return (true, resultString)
+        } else {
+            return (false, resultString)
+        }
+    }
+    
     func symbolicateWithAtos(loadAddress: String) -> (Bool, String?) {
         guard let dsym = dSYMFile else {
             return (false, "未找到dSYM文件")
@@ -177,6 +196,74 @@ struct CarshTransfromTools {
 
         return nil
     }
+    
+    /// 转换iOS 16+的崩溃日志为ips格式
+    func convertIPSJSONToCrashText(json: [String: Any]) -> String {
+        var result = ""
+
+        // 1. 报告头部信息
+        if let system = json["system"] as? [String: Any] {
+            if let osVersion = system["osVersion"] as? String {
+                result += "OS Version: \(osVersion)\n"
+            }
+            if let osBuild = system["osBuild"] as? String {
+                result += "OS Build: \(osBuild)\n"
+            }
+            if let architecture = system["architecture"] as? String {
+                result += "Architecture: \(architecture)\n"
+            }
+        }
+
+        if let metadata = json["metadata"] as? [String: Any] {
+            if let appName = metadata["appName"] as? String {
+                result += "App Name: \(appName)\n"
+            }
+            if let appVersion = metadata["appVersion"] as? String {
+                result += "App Version: \(appVersion)\n"
+            }
+            if let appBuildVersion = metadata["appBuildVersion"] as? String {
+                result += "App Build: \(appBuildVersion)\n"
+            }
+            if let processName = metadata["processName"] as? String {
+                result += "Process: \(processName)\n"
+            }
+        }
+
+        // 2. 崩溃类型
+        if let crash = json["crash"] as? [String: Any] {
+            if let exceptionType = crash["exceptionType"] as? String {
+                result += "Exception Type: \(exceptionType)\n"
+            }
+            if let termination = crash["termination"] as? [String: Any] {
+                if let reason = termination["reason"] as? String {
+                    result += "Termination Reason: \(reason)\n"
+                }
+            }
+        }
+
+        // 3. 线程信息（主线程）
+        if let threads = json["threads"] as? [[String: Any]] {
+            for thread in threads {
+                if let threadId = thread["id"] as? Int,
+                   let isCrashed = thread["triggered"] as? Bool {
+                    result += "\nThread \(threadId) \(isCrashed ? "Crashed:" : "")\n"
+
+                    if let frames = thread["frames"] as? [[String: Any]] {
+                        for (index, frame) in frames.enumerated() {
+                            let frameIndex = String(format: "%-4d", index)
+                            let binaryName = frame["image"] as? String ?? "???"
+                            let symbol = frame["symbol"] as? String ?? "???"
+                            let offset = frame["offset"] as? Int ?? 0
+                            result += "\(frameIndex) \(binaryName) \(symbol) + \(offset)\n"
+                        }
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
 }
 
 
